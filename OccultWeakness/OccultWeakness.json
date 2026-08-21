@@ -1,0 +1,9 @@
+{
+  "Author": "Hylieno",
+  "Name": "Occult Weakness",
+  "Punchline": "Affiche la faiblesse élémentaire de la cible sur son nameplate.",
+  "Description": "Associe des monstres à une faiblesse élémentaire et affiche l’icône correspondante à gauche du nom de la cible. Commande : /ocweak",
+  "ApplicableVersion": "any",
+  "Tags": ["occult crescent", "nameplate", "element"],
+  "RepoUrl": "https://github.com/Hylieno/OccultWeakness"
+}
