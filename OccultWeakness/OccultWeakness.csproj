@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
   <PropertyGroup>
-    <Version>0.1.0.0</Version>
+    <Version>0.1.0.1</Version>
     <PackageProjectUrl>https://github.com/Hylieno/OccultWeakness</PackageProjectUrl>
+    <IconUrl>https://raw.githubusercontent.com/Hylieno/DalaLeno/main/plugins/OccultWeakness/icon.png</IconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
     <Platforms>x64</Platforms>
