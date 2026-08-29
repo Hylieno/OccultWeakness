@@ -5,5 +5,6 @@
   "Description": "Associe des monstres à une faiblesse élémentaire et affiche l’icône correspondante à gauche du nom de la cible. Commande : /ocweak",
   "ApplicableVersion": "any",
   "Tags": ["occult crescent", "nameplate", "element"],
-  "RepoUrl": "https://github.com/Hylieno/OccultWeakness"
+  "RepoUrl": "https://github.com/Hylieno/OccultWeakness",
+  "IconUrl": "https://raw.githubusercontent.com/Hylieno/DalaLeno/main/plugins/OccultWeakness/icon.png"
 }
