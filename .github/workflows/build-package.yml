@@ -1,0 +1,69 @@
+name: Build stable package
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'dist/latest.zip'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: occult-weakness-stable
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install Dalamud development files
+        shell: pwsh
+        run: |
+          $dalamudDir = "$env:APPDATA\XIVLauncher\addon\Hooks\dev"
+          New-Item -ItemType Directory -Force -Path $dalamudDir | Out-Null
+          Invoke-WebRequest -Uri "https://goatcorp.github.io/dalamud-distrib/latest.zip" -OutFile "$env:RUNNER_TEMP\dalamud.zip"
+          Expand-Archive -Path "$env:RUNNER_TEMP\dalamud.zip" -DestinationPath $dalamudDir -Force
+
+      - name: Restore
+        run: dotnet restore OccultWeakness.sln
+
+      - name: Build Release
+        run: dotnet build OccultWeakness.sln --configuration Release --no-restore
+
+      - name: Locate and validate package
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem -Path "OccultWeakness\bin" -Recurse -Filter "latest.zip" | Select-Object -First 1
+          if (-not $zip) { throw "DalamudPackager did not generate latest.zip" }
+          New-Item -ItemType Directory -Force -Path "dist" | Out-Null
+          Copy-Item $zip.FullName "dist\latest.zip" -Force
+          $check = "$env:RUNNER_TEMP\occult-package-check"
+          if (Test-Path $check) { Remove-Item $check -Recurse -Force }
+          Expand-Archive -Path "dist\latest.zip" -DestinationPath $check -Force
+          if (-not (Test-Path "$check\OccultWeakness.dll")) { throw "OccultWeakness.dll missing from package" }
+          if (-not (Test-Path "$check\OccultWeakness.json")) { throw "OccultWeakness.json missing from package" }
+
+      - name: Publish stable package
+        shell: bash
+        run: |
+          git add -f dist/latest.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then
+            echo "Stable package already up to date."
+            exit 0
+          fi
+          git commit -m "Build stable package [skip ci]"
+          git push origin HEAD:main
